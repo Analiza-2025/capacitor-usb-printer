@@ -1,0 +1,72 @@
+{
+  "name": "capacitor-usb-printer",
+  "version": "1.0.0",
+  "description": "Capacitor plugin for USB thermal printer support using ESC/POS commands",
+  "main": "dist/plugin.cjs.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/esm/index.d.ts",
+  "unpkg": "dist/plugin.js",
+  "files": [
+    "android/",
+    "dist/",
+    "ios/",
+    "CapacitorUsbPrinter.podspec"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yourusername/capacitor-usb-printer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/capacitor-usb-printer/issues"
+  },
+  "keywords": [
+    "capacitor",
+    "plugin",
+    "native",
+    "usb",
+    "printer",
+    "thermal",
+    "escpos"
+  ],
+  "scripts": {
+    "verify": "npm run verify:ios && npm run verify:android && npm run verify:web",
+    "verify:ios": "cd ios && pod install && xcodebuild -workspace Plugin.xcworkspace -scheme Plugin clean build test CODE_SIGNING_ALLOWED=NO",
+    "verify:android": "cd android && ./gradlew clean build test",
+    "verify:web": "npm run build",
+    "build": "npm run clean && npm run docgen && tsc && rollup -c rollup.config.js",
+    "clean": "rimraf ./dist",
+    "watch": "tsc --watch",
+    "prepublishOnly": "npm run build",
+    "docgen": "docgen --api CapacitorPrintersPlugin --output-readme README.md --output-json dist/docs.json"
+  },
+  "devDependencies": {
+    "@capacitor/android": "^7.0.0",
+    "@capacitor/cli": "^7.0.0",
+    "@capacitor/core": "^7.0.0",
+    "@capacitor/docgen": "^0.0.18",
+    "@capacitor/ios": "^7.0.0",
+    "@ionic/prettier-config": "^1.0.1",
+    "@ionic/swiftlint-config": "^1.1.2",
+    "prettier": "~2.3.0",
+    "prettier-plugin-java": "~1.0.2",
+    "rimraf": "^3.0.2",
+    "rollup": "^2.32.0",
+    "swiftlint": "^1.0.1",
+    "typescript": "~4.1.5"
+  },
+  "peerDependencies": {
+    "@capacitor/core": "^7.0.0"
+  },
+  "prettier": "@ionic/prettier-config",
+  "swiftlint": "@ionic/swiftlint-config",
+  "capacitor": {
+    "ios": {
+      "src": "ios"
+    },
+    "android": {
+      "src": "android"
+    }
+  }
+}
