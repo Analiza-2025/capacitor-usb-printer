@@ -63,7 +63,7 @@ export interface PrintImageOptions {
     imageAlign?: 'left' | 'center' | 'right';
     /**
      * Force image to full width
-     * @default false
+     * @default true
      */
     imageFullWidth?: boolean;
 }

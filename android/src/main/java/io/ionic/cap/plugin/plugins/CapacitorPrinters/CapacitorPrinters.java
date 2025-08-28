@@ -77,7 +77,7 @@ public class CapacitorPrinters {
         }
     }
 
-    public void printBase64Image(String base64Image, int dpi, float widthMM, int charactersPerLine) throws Exception {
+    public void printBase64Image(String base64Image, int dpi, float widthMM, int charactersPerLine, boolean imageFullWidth, String imageAlign) throws Exception {
         UsbConnection usbConnection = UsbPrintersConnections.selectFirstConnected(activity);
         
         if (usbConnection == null) {
@@ -100,21 +100,42 @@ public class CapacitorPrinters {
                 throw new Exception("Failed to decode base64 image");
             }
 
+            // Force image to full width while maintaining aspect ratio
+            if (imageFullWidth) {
+                int printerWidthPx = (int) (widthMM * dpi / 25.4f);
+                int originalWidth = decodedBitmap.getWidth();
+                int originalHeight = decodedBitmap.getHeight();
+                
+                // Calculate new height maintaining aspect ratio
+                int newHeight = (int) ((float) originalHeight * printerWidthPx / originalWidth);
+                
+                // Scale the bitmap to full width
+                decodedBitmap = Bitmap.createScaledBitmap(decodedBitmap, printerWidthPx, newHeight, true);
+            }
+
             int width = decodedBitmap.getWidth();
             int height = decodedBitmap.getHeight();
 
             StringBuilder textToPrint = new StringBuilder();
             
+            // Determine alignment tag
+            String alignTag = "[C]"; // default center
+            if ("left".equalsIgnoreCase(imageAlign)) {
+                alignTag = "[L]";
+            } else if ("right".equalsIgnoreCase(imageAlign)) {
+                alignTag = "[R]";
+            }
+            
             // Process image in chunks of 256 pixels height to avoid memory issues
             for (int y = 0; y < height; y += 256) {
                 int chunkHeight = (y + 256 >= height) ? height - y : 256;
                 Bitmap bitmap = Bitmap.createBitmap(decodedBitmap, 0, y, width, chunkHeight);
-                textToPrint.append("[C]<img>")
+                textToPrint.append(alignTag).append("<img>")
                           .append(PrinterTextParserImg.bitmapToHexadecimalString(printer, bitmap))
                           .append("</img>\n");
             }
             
-            textToPrint.append("[C]Printed!!!\n");
+            textToPrint.append("\n\n\n");
             printer.printFormattedTextAndCut(textToPrint.toString());
             
         } finally {

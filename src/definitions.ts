@@ -76,7 +76,7 @@ export interface PrintImageOptions {
   
   /**
    * Force image to full width
-   * @default false
+   * @default true
    */
   imageFullWidth?: boolean;
 }

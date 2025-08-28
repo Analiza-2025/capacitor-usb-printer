@@ -65,13 +65,17 @@ public class CapacitorPrintersPlugin extends Plugin {
         Integer dpi = call.getInt("dpi");
         Double widthMM = call.getDouble("widthMM");
         Integer charactersPerLine = call.getInt("charactersPerLine");
+        Boolean imageFullWidth = call.getBoolean("imageFullWidth");
+        String imageAlign = call.getString("imageAlign");
 
         try {
             implementation.printBase64Image(
                 base64Image,
                 dpi != null ? dpi : 203,
                 widthMM != null ? widthMM.floatValue() : 48f,
-                charactersPerLine != null ? charactersPerLine : 32
+                charactersPerLine != null ? charactersPerLine : 32,
+                imageFullWidth != null ? imageFullWidth : true,
+                imageAlign != null ? imageAlign : "center"
             );
             call.resolve();
         } catch (Exception e) {
