@@ -1,1 +1,1 @@
-"use strict";Object.defineProperty(exports,Symbol.toStringTag,{value:"Module"});const r=require("@capacitor/core"),t=r.registerPlugin("CapacitorPrinters",{web:()=>Promise.resolve().then(()=>require("./web-C1xLKIg5.js")).then(e=>new e.CapacitorPrintersWeb)});exports.CapacitorPrinters=t;
+"use strict";Object.defineProperty(exports,Symbol.toStringTag,{value:"Module"});const r=require("@capacitor/core"),t=r.registerPlugin("CapacitorPrinters",{web:()=>Promise.resolve().then(()=>require("./web-DooHM2Dq.js")).then(e=>new e.CapacitorPrintersWeb)});exports.CapacitorPrinters=t;

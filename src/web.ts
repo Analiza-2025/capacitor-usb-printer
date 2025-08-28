@@ -1,5 +1,5 @@
 import { WebPlugin } from '@capacitor/core';
-import type { CapacitorPrintersPlugin, PrinterDevice, PrintOptions } from './definitions';
+import type { CapacitorPrintersPlugin, PrinterDevice, PrintOptions, PrintImageOptions } from './definitions';
 
 export class CapacitorPrintersWeb extends WebPlugin implements CapacitorPrintersPlugin {
   async getUsbPrinters(): Promise<{ printers: PrinterDevice[] }> {
@@ -20,5 +20,10 @@ export class CapacitorPrintersWeb extends WebPlugin implements CapacitorPrinters
   async requestUsbPermissions(): Promise<{ granted: boolean }> {
     console.log('CapacitorPrinters: requestUsbPermissions not needed on web');
     return { granted: true };
+  }
+
+  async printBase64Image(options: PrintImageOptions): Promise<void> {
+    console.log('CapacitorPrinters: printBase64Image called with options:', options);
+    console.log('CapacitorPrinters: Print not supported on web platform');
   }
 }

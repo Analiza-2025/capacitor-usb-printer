@@ -45,6 +45,42 @@ export interface PrintOptions {
   charactersPerLine?: number;
 }
 
+export interface PrintImageOptions {
+  /**
+   * Base64 encoded image data
+   */
+  base64Image: string;
+  
+  /**
+   * Device to print to
+   */
+  device?: PrinterDevice;
+  
+  /**
+   * Printer DPI (dots per inch)
+   * @default 203
+   */
+  dpi?: number;
+  
+  /**
+   * Printer width in millimeters
+   * @default 48
+   */
+  widthMM?: number;
+  
+  /**
+   * Image alignment
+   * @default 'center'
+   */
+  imageAlign?: 'left' | 'center' | 'right';
+  
+  /**
+   * Force image to full width
+   * @default false
+   */
+  imageFullWidth?: boolean;
+}
+
 export interface CapacitorPrintersPlugin {
   /**
    * Get list of available USB printers
@@ -55,6 +91,11 @@ export interface CapacitorPrintersPlugin {
    * Print formatted text to a printer
    */
   print(options: PrintOptions): Promise<void>;
+  
+  /**
+   * Print base64 encoded image to a printer
+   */
+  printBase64Image(options: PrintImageOptions): Promise<void>;
   
   /**
    * Check if USB printer permissions are granted

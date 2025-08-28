@@ -2,8 +2,11 @@ package io.ionic.cap.plugin.plugins.CapacitorPrinters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
+import android.util.Base64;
 
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
@@ -11,6 +14,7 @@ import com.getcapacitor.JSObject;
 import com.dantsu.escposprinter.EscPosPrinter;
 import com.dantsu.escposprinter.connection.usb.UsbConnection;
 import com.dantsu.escposprinter.connection.usb.UsbPrintersConnections;
+import com.dantsu.escposprinter.textparser.PrinterTextParserImg;
 
 public class CapacitorPrinters {
 
@@ -70,6 +74,51 @@ public class CapacitorPrinters {
             return usbManager != null && usbManager.hasPermission(usbConnection.getDevice());
         } catch (Exception e) {
             return false;
+        }
+    }
+
+    public void printBase64Image(String base64Image, int dpi, float widthMM, int charactersPerLine) throws Exception {
+        UsbConnection usbConnection = UsbPrintersConnections.selectFirstConnected(activity);
+        
+        if (usbConnection == null) {
+            throw new Exception("No USB printer connected");
+        }
+
+        // Check if we have permission for this device
+        if (usbManager != null && !usbManager.hasPermission(usbConnection.getDevice())) {
+            throw new Exception("USB permission not granted for this device");
+        }
+
+        EscPosPrinter printer = new EscPosPrinter(usbConnection, dpi, widthMM, charactersPerLine);
+        
+        try {
+            // Decode base64 string to bitmap
+            byte[] decodedString = Base64.decode(base64Image, Base64.DEFAULT);
+            Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+            
+            if (decodedBitmap == null) {
+                throw new Exception("Failed to decode base64 image");
+            }
+
+            int width = decodedBitmap.getWidth();
+            int height = decodedBitmap.getHeight();
+
+            StringBuilder textToPrint = new StringBuilder();
+            
+            // Process image in chunks of 256 pixels height to avoid memory issues
+            for (int y = 0; y < height; y += 256) {
+                int chunkHeight = (y + 256 >= height) ? height - y : 256;
+                Bitmap bitmap = Bitmap.createBitmap(decodedBitmap, 0, y, width, chunkHeight);
+                textToPrint.append("[C]<img>")
+                          .append(PrinterTextParserImg.bitmapToHexadecimalString(printer, bitmap))
+                          .append("</img>\n");
+            }
+            
+            textToPrint.append("[C]Printed!!!\n");
+            printer.printFormattedTextAndCut(textToPrint.toString());
+            
+        } finally {
+            printer.disconnectPrinter();
         }
     }
 

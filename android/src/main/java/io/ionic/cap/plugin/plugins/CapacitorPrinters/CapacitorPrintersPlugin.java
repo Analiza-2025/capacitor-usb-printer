@@ -55,6 +55,31 @@ public class CapacitorPrintersPlugin extends Plugin {
     }
 
     @PluginMethod()
+    public void printBase64Image(PluginCall call) {
+        String base64Image = call.getString("base64Image");
+        if (base64Image == null) {
+            call.reject("Base64 image parameter is required");
+            return;
+        }
+
+        Integer dpi = call.getInt("dpi");
+        Double widthMM = call.getDouble("widthMM");
+        Integer charactersPerLine = call.getInt("charactersPerLine");
+
+        try {
+            implementation.printBase64Image(
+                base64Image,
+                dpi != null ? dpi : 203,
+                widthMM != null ? widthMM.floatValue() : 48f,
+                charactersPerLine != null ? charactersPerLine : 32
+            );
+            call.resolve();
+        } catch (Exception e) {
+            call.reject("Print image error: " + e.getMessage(), e);
+        }
+    }
+
+    @PluginMethod()
     public void checkUsbPermissions(PluginCall call) {
         boolean granted = implementation.checkUsbPermissions();
         JSObject ret = new JSObject();
